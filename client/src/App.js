@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 //import logo from './logo.svg';
 import './App.css';
+import Config from './config';
 import axios from 'axios';
 
 //import './dist/css/'
@@ -42,7 +43,7 @@ class MainPhoto extends Component {
 
                 <div className="col-lg-8">
                     <div className="mainPhoto" id="mainPhoto">
-                        <img key="MainPhotoImg" src={"images/1200/"+this.props.activePhoto.foto}
+                        <img key="MainPhotoImg" src={Config.apiBaseUrl+"/images/1200/"+this.props.activePhoto.foto}
                              className="img-responsive mainPhoto" alt={this.props.activePhoto.titulo}></img>
                     </div>
                 </div>
@@ -74,7 +75,7 @@ class Thumbnail extends Component {
             <div key={this.props.photo.idfoto} className="thumbnail">
                 <div className="">
                     <a onClick={()=>this.props.onClick()}>
-                        <img src={"images/600/600-"+this.props.photo.foto} className="thumbnailImage"
+                        <img src={Config.apiBaseUrl+"/images/600/"+this.props.photo.foto} className="thumbnailImage"
                              alt=""></img>
                     </a>
 
@@ -137,12 +138,7 @@ class App extends Component {
         //var as = [{"idfoto":"1","foto":"001-Playa-Naranjo-a-Volcan-Orosi-aerea-1988.jpg","titulo":"Playa Naranjo a Volc\u00e1n Oros\u00ed a\u00e9rea","sector":"(Izquierda) Volc\u00e1n Cacao (derecha) Cerro el Hacha (Izquierda)Argelia Centro Abajo","latitud":"10.7715072632","longitud":"-85.6607894897","ano":"1988"},{"idfoto":"2","foto":"002-Carbonal-1988.jpg","titulo":"Carbonal","sector":"(parte mas sur del sector Santa Rosa)","latitud":"10.7591123581","longitud":"-85.6585159302","ano":"1988"},{"idfoto":"3","foto":"003-Camino-a-playa-naranjo-1988.jpg","titulo":"Camino a playa Naranjo","sector":"Sector Oeste, Sector Santa Rosa","latitud":"10.8067502975","longitud":"-85.6481475830","ano":"1988"},{"idfoto":"4","foto":"004-Camino-a-playa-naranjo-1988.jpg","titulo":"Camino a playa Naranjo","sector":"Sector Oeste, Sector Santa Rosa","latitud":"10.8048954010","longitud":"-85.6473770142","ano":"1988"},{"idfoto":"5","foto":"005-Camino-a-playa-naranjo-1988.jpg","titulo":"Camino a playa Naranjo","sector":"Sector Este, Sector Santa Rosa, Quebrada Costa Rica en Centro","latitud":"10.8283739090","longitud":"-85.6363906860","ano":"1988"},{"idfoto":"6","foto":"006-Rio-Calera-1988.jpg","titulo":"R\u00edo Calera","sector":"Camino a playa Naranjo arriba. Sector Santa Rosa","latitud":"10.8370571136","longitud":"-85.6427764893","ano":"1988"},{"idfoto":"7","foto":"007-Area-Administrativa-Santa-Rosa-1988.jpg","titulo":"\u00c1rea Administrativa Santa Rosa","sector":"Corral de piedra sector Santa Rosa","latitud":"10.8392705917","longitud":"-85.6177902222","ano":"1988"},{"idfoto":"8","foto":"008-Area-Administrativa-Bosque-San-Emilio-1988.jpg","titulo":"\u00c1rea Administrativa Bosque San Emilio","sector":"A la izquierda sector Santa Rosa","latitud":"10.8207654953","longitud":"-85.5497131348","ano":"1988"},{"idfoto":"9","foto":"009-area-oeste-bosque-san-emilio-norte-sector-santa-rosa-1988.jpg","titulo":"\u00c1rea oeste bosque san Emilio norte sector santa rosa","sector":"Sector oeste bosque San Emilio y norte \u00e1rea administrativa Santa Rosa","latitud":"10.8209552765","longitud":"-85.5481262207","ano":"1988"},{"idfoto":"10","foto":"010-Oeste-Bosque-san-emilio-hacia-arriba-sector-santa-rosa-1988.jpg","titulo":"Oeste Bosque san Emilio hacia arriba sector santa rosa","sector":"Sector Santa Rosa","latitud":"10.8216934204","longitud":"-85.5476913452","ano":"1988"}];
         const as = [{"idfoto":"1","foto":"001-Playa-Naranjo-a-Volcan-Orosi-aerea-1988.jpg","titulo":"Playa Naranjo a Volc\u00e1n Oros\u00ed a\u00e9rea","sector":"(Izquierda) Volc\u00e1n Cacao (derecha) Cerro el Hacha (Izquierda)Argelia Centro Abajo","latitud":"10.7715072632","longitud":"-85.6607894897","ano":"1988"},{"idfoto":"2","foto":"002-Carbonal-1988.jpg","titulo":"Carbonal","sector":"(parte mas sur del sector Santa Rosa)","latitud":"10.7591123581","longitud":"-85.6585159302","ano":"1988"},{"idfoto":"3","foto":"003-Camino-a-playa-naranjo-1988.jpg","titulo":"Camino a playa Naranjo","sector":"Sector Oeste, Sector Santa Rosa","latitud":"10.8067502975","longitud":"-85.6481475830","ano":"1988"},];
         // console.log(as);
-        this.config = {
-            server: {
-                url: "http://api.acgaereo.local/fotos/",
 
-            }
-        };
 
         this.state = {
             photos: as,
@@ -165,7 +161,7 @@ class App extends Component {
 
     componentDidMount() {
         console.log(this.state);
-        fetch(this.config.server.url)
+        fetch(Config.apiBaseUrl+"/fotos/")
             .then(photos => photos.json())
             .then(photos => {
                 this.setState({photos:photos,activePhoto:photos[0]});
