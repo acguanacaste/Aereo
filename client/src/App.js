@@ -117,6 +117,7 @@ class ThumbnailSet extends Component {
             // this.props.photos.forEach((photo)=>{
             rows.push(that.renderThumbnail(pic));
             //console.log(photo);
+            return rows;
         });
 
 
@@ -163,7 +164,6 @@ class App extends Component {
             .then(photos => {
                 this.setState({photos:photos,activePhoto:photos[0]});
             });
-
     }
 
 
@@ -173,10 +173,7 @@ class App extends Component {
     }
 
     render() {
-
-
         return (
-
             <div className="App container">
                 <ThumbnailSet
                     photos={this.state.photos}
@@ -188,7 +185,6 @@ class App extends Component {
                     activePhoto={this.state.activePhoto}
                     photos={this.state.photos}
                 />
-
             </div>
         );
     }
