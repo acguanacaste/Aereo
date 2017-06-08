@@ -54,7 +54,7 @@ const PopUpInfoWindowExampleGoogleMap = withGoogleMap(props => (
 
         <Marker
             key="ActivePicture"
-            position={{ lat: parseFloat(props.markers[0].lat), lng: parseFloat(props.markers[0].lng) }}
+            position={{ lat: parseFloat(props.activePhoto.latitud), lng: parseFloat(props.activePhoto.longitud) }}
             icon={activeIcon}
             zIndex={99999999}
         />
@@ -82,20 +82,6 @@ export default class PhotoMap extends Component {
 
 
         markers :this.props.photos.map((marker, index) =>{
-            let rows = [];
-
-            rows.push({
-                key: index,
-                title: marker.titulo,
-                lat:marker.latitud,
-                lng:marker.longitud,
-                position: new google.maps.LatLng(parseFloat(marker.latitud), parseFloat(marker.longitud)),
-                showInfo: false,
-                infoContent:
-                    (<div >{marker.titulo} </div>)
-
-            });
-
             return {
                 key: index,
                 icon: pinIcon,
