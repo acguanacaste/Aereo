@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 //import logo from './logo.svg';
 import './App.css';
 import Config from './config';
-import axios from 'axios';
+import PhotoMap from './Map.js';
+//import axios from 'axios';
 
 //import './dist/css/'
 
@@ -24,14 +25,7 @@ class YearSlider extends Component {
         );
     }
 }
-class PhotoMap extends Component {
-    render() {
-        return (
-            <div id="map" className="panel">
-            </div>
-        );
-    }
-}
+
 
 class MainPhoto extends Component {
 
@@ -55,7 +49,10 @@ class MainPhoto extends Component {
                             <li key="MainYear">{this.props.activePhoto.ano}</li>
                         </ul>
                     </div>
-                    <PhotoMap />
+                    <PhotoMap
+                        photos={this.props.photos}
+                        activePhoto={this.props.activePhoto}
+                    />
                     <YearSlider />
                 </div>
 
@@ -187,7 +184,10 @@ class App extends Component {
                     activePhoto={this.state.activePhoto}
                     handleNewActive={this.handleNewActive.bind(this)}
                 />
-                <MainPhoto activePhoto={this.state.activePhoto}/>
+                <MainPhoto
+                    activePhoto={this.state.activePhoto}
+                    photos={this.state.photos}
+                />
 
             </div>
         );
