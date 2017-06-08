@@ -23,6 +23,8 @@
 
   <link href="dist/css/jquery-ui-slider-pips.css" rel="stylesheet">
   <script src="/dist/js/jquery-ui-slider-pips.js"></script>
+  <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD547gZwixxFiDZ3BOgVoC3YIH7odiWd6M"></script>
 </head>
 <body>
 <div class="container container-fluid">
@@ -31,7 +33,7 @@
 </div>
 
 <script>
-
+/*
     function initMap() {
 
         var map = new google.maps.Map(document.getElementById('map'), {
@@ -81,7 +83,7 @@
         {lat: -42.734358, lng: 147.501315},
         {lat: -42.735258, lng: 147.438000},
         {lat: -43.999792, lng: 170.463352}
-    ]
+    ]*/
     // With JQuery\=]
     var years = [1956,1961,1968,1996,1997,2003];
     $(".slider").slider().slider("pips");
@@ -99,10 +101,7 @@
 
 
 </script>
-<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
-</script>
-<script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD547gZwixxFiDZ3BOgVoC3YIH7odiWd6M&callback=initMap">
-</script>
+
+
 </body>
 </html>
