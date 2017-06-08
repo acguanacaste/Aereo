@@ -12,6 +12,27 @@ import MarkerClusterer from "react-google-maps/lib/addons/MarkerClusterer";
 /*
  * Sample From: https://developers.google.com/maps/documentation/javascript/examples/map-simple
  */
+
+
+/*
+*
+*
+    Esto va dentro del GoogleMap para ponerlo
+ <MarkerClusterer
+ averageCenter
+ enableRetinaIcons
+ gridSize={60}
+ >
+ {props.markers.map(marker => (
+ <Marker
+ position={{ lat: parseFloat(marker.latitud), lng: parseFloat(marker.longitud) }}
+ key={marker.idfoto}
+ />
+ ))}
+ </MarkerClusterer>
+
+* */
+
 const SimpleMapExampleGoogleMap = withGoogleMap(props => (
     <GoogleMap
         defaultZoom={9}
@@ -29,20 +50,14 @@ const MarkerClustererExampleGoogleMap = withGoogleMap(props => (
     >
 
 
+        {props.markers.map(marker => (
+        <Marker
+            position={{ lat: parseFloat(marker.latitud), lng: parseFloat(marker.longitud) }}
+            key={marker.idfoto}
+        />
+        ))}
 
 
-         <MarkerClusterer
-         averageCenter
-         enableRetinaIcons
-         gridSize={60}
-         >
-         {props.markers.map(marker => (
-         <Marker
-         position={{ lat: parseFloat(marker.latitud), lng: parseFloat(marker.longitud) }}
-         key={marker.idfoto}
-         />
-         ))}
-         </MarkerClusterer>
 
     </GoogleMap>
 ));
