@@ -28,7 +28,15 @@ class YearSlider extends Component {
 
 
 class MainPhoto extends Component {
+    constructor(props) {
+        super(props);
+        // Manually bind this method to the component instance...
+        this.handleClick = this.handleClick.bind(this);
 
+    }
+    handleClick(photo){
+        this.props.handleNewActive(photo);
+    }
 
     render() {
 
@@ -52,6 +60,7 @@ class MainPhoto extends Component {
                     <PhotoMap
                         photos={this.props.photos}
                         activePhoto={this.props.activePhoto}
+                        onNewActive={this.handleClick.bind(this)} //se pasa este métdodo para que sea usado por el mapa para poner el estado
                     />
                     <YearSlider />
                 </div>
@@ -114,7 +123,6 @@ class ThumbnailSet extends Component {
         var that = this;
         let rows=[];
         this.props.photos.map(function (pic){
-            // this.props.photos.forEach((photo)=>{
             rows.push(that.renderThumbnail(pic));
             //console.log(photo);
             return rows;
@@ -184,6 +192,7 @@ class App extends Component {
                 <MainPhoto
                     activePhoto={this.state.activePhoto}
                     photos={this.state.photos}
+                    handleNewActive={this.handleNewActive.bind(this)}
                 />
             </div>
         );
