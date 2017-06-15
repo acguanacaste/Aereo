@@ -3,6 +3,7 @@ import React, {Component} from 'react';
 import './App.css';
 import Config from './config';
 import PhotoMap from './Map.js';
+import ThumbnailSet from './ThumbnailSet.js';
 //import axios from 'axios';
 
 //import './dist/css/'
@@ -85,61 +86,7 @@ class MainPhoto extends Component {
 /**
  * @todo: pasar Thumbnail y ThumbnailSet a un archivo aparte
  */
-class Thumbnail extends Component {
 
-    render() {
-        // console.log(this.props)
-        return (
-            <div key={this.props.photo.idfoto} className="thumbnail">
-                <div className="">
-                    <a onClick={()=>this.props.onClick()}>
-                        <img src={Config.apiBaseUrl+"/images/600/"+this.props.photo.foto} className="thumbnailImage"
-                             alt=""></img>
-                    </a>
-                </div>
-            </div>
-        );
-    }
-}
-
-
-class ThumbnailSet extends Component {
-    constructor(props) {
-        super(props);
-        // Manually bind this method to the component instance...
-        this.handleClick = this.handleClick.bind(this);
-        this.handleNewPhotos = this.handleNewPhotos.bind(this);
-    }
-    renderThumbnail(photo) {
-        return (<Thumbnail
-            key={photo.idfoto}
-            photo={photo}
-            onClick={() => this.handleClick(photo)
-            }
-        />);
-    }
-    handleClick(photo){
-        this.props.handleNewActive(photo);
-    }
-    handleNewPhotos(photos){
-        this.props.handleNewPhotos(photos);
-    }
-
-    render() {
-        var that = this;
-        let rows=[];
-        this.props.photos.map(function (pic){
-            rows.push(that.renderThumbnail(pic));
-            //console.log(photo);
-            return rows;
-        });
-        return (
-            <div className="thumbnailList">
-                {rows}
-            </div>
-        );
-    }
-}
 
 
 class App extends Component {

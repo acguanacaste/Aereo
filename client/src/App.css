@@ -37,29 +37,7 @@
   color: #807e7e;
   font-size: 0.85em;
 }
-.thumbnailImage{
-  cursor: pointer;
-}
-.thumbnailCaption{
-  font-size: 0.6em;
-  cursor: pointer;
-}
 
-.thumbnail{
-  list-style: none;
-  display: inline-block;
-  margin-bottom: 10px;
-
-}
-.thumbnail .thumbnailImage{
-  height: 120px;
-  max-width:140px;
-}
-.thumbnailList{
-  overflow: auto;
-  white-space: nowrap;
-  height: 150px;
-}
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
