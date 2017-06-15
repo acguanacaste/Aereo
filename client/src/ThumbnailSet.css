@@ -1,0 +1,23 @@
+.thumbnailImage{
+    cursor: pointer;
+}
+.thumbnailCaption{
+    font-size: 0.6em;
+    cursor: pointer;
+}
+
+.thumbnail{
+    list-style: none;
+    display: inline-block;
+    margin-bottom: 10px;
+
+}
+.thumbnail .thumbnailImage{
+    height: 120px;
+    max-width:140px;
+}
+.thumbnailList{
+    overflow: auto;
+    white-space: nowrap;
+    height: 150px;
+}
