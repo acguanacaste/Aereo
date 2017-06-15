@@ -32,10 +32,18 @@ class MainPhoto extends Component {
         super(props);
         // Manually bind this method to the component instance...
         this.handleClick = this.handleClick.bind(this);
-
+        this.handleYearSearch = this.handleYearSearch.bind(this);
+        this.handleGeoSearch = this.handleGeoSearch.bind(this);
     }
+
     handleClick(photo){
         this.props.handleNewActive(photo);
+    }
+    handleGeoSearch(bounds){
+        this.props.handleGeoSearch(bounds);
+    }
+    handleYearSearch(year){
+        this.props.handleYearSearch(year);
     }
 
     render() {
@@ -60,40 +68,42 @@ class MainPhoto extends Component {
                     <PhotoMap
                         photos={this.props.photos}
                         activePhoto={this.props.activePhoto}
+                        year={this.props.year}
+                        geoSearch={this.props.geoSearch}
                         onNewActive={this.handleClick.bind(this)} //se pasa este métdodo para que sea usado por el mapa para poner el estado
+                        handleGeoSearch={this.handleGeoSearch.bind(this)}
                     />
-                    <YearSlider />
+                    <YearSlider
+                        handleYearSearch={this.handleYearSearch.bind(this)}
+                    />
                 </div>
-
-
             </div>
         );
     }
 }
 
-
+/**
+ * @todo: pasar Thumbnail y ThumbnailSet a un archivo aparte
+ */
 class Thumbnail extends Component {
 
     render() {
         // console.log(this.props)
         return (
-
             <div key={this.props.photo.idfoto} className="thumbnail">
                 <div className="">
                     <a onClick={()=>this.props.onClick()}>
                         <img src={Config.apiBaseUrl+"/images/600/"+this.props.photo.foto} className="thumbnailImage"
                              alt=""></img>
                     </a>
-
-
                 </div>
             </div>
         );
     }
 }
 
-class ThumbnailSet extends Component {
 
+class ThumbnailSet extends Component {
     constructor(props) {
         super(props);
         // Manually bind this method to the component instance...
@@ -108,16 +118,12 @@ class ThumbnailSet extends Component {
             }
         />);
     }
-
     handleClick(photo){
         this.props.handleNewActive(photo);
     }
     handleNewPhotos(photos){
         this.props.handleNewPhotos(photos);
     }
-
-
-
 
     render() {
         var that = this;
@@ -127,8 +133,6 @@ class ThumbnailSet extends Component {
             //console.log(photo);
             return rows;
         });
-
-
         return (
             <div className="thumbnailList">
                 {rows}
@@ -145,16 +149,27 @@ class App extends Component {
         const as = [{"idfoto":"1","foto":"001-Playa-Naranjo-a-Volcan-Orosi-aerea-1988.jpg","titulo":"Playa Naranjo a Volc\u00e1n Oros\u00ed a\u00e9rea","sector":"(Izquierda) Volc\u00e1n Cacao (derecha) Cerro el Hacha (Izquierda)Argelia Centro Abajo","latitud":"10.7715072632","longitud":"-85.6607894897","ano":"1988"},{"idfoto":"2","foto":"002-Carbonal-1988.jpg","titulo":"Carbonal","sector":"(parte mas sur del sector Santa Rosa)","latitud":"10.7591123581","longitud":"-85.6585159302","ano":"1988"},{"idfoto":"3","foto":"003-Camino-a-playa-naranjo-1988.jpg","titulo":"Camino a playa Naranjo","sector":"Sector Oeste, Sector Santa Rosa","latitud":"10.8067502975","longitud":"-85.6481475830","ano":"1988"},];
         // console.log(as);
 
-
         this.state = {
             photos: as,
             activePhoto: as[0],
+            year:null,
+            geoSearch:null,
         }
-        this.loadPhotos = this.loadPhotos.bind(this);
         this.handleNewPhotos= this.handleNewPhotos.bind(this);
         this.handleNewActive=this.handleNewActive.bind(this);
+        this.handleGeoSearch=this.handleGeoSearch.bind(this);
+        this.handleYearSearch=this.handleYearSearch.bind(this);
         this.componentDidMount=this.componentDidMount.bind(this);
+    }
 
+    handleGeoSearch(bounds){
+
+        this.setState({geoSearch:bounds});
+        console.log(this.state);
+    }
+
+    handleYearSearch(year){
+        this.setState({year});
     }
 
     handleNewActive(activePhoto){
@@ -174,12 +189,6 @@ class App extends Component {
             });
     }
 
-
-    loadPhotos(){
-
-
-    }
-
     render() {
         return (
             <div className="App container">
@@ -192,7 +201,11 @@ class App extends Component {
                 <MainPhoto
                     activePhoto={this.state.activePhoto}
                     photos={this.state.photos}
+                    year={this.state.year}
+                    geoSearch={this.state.geoSearch}
                     handleNewActive={this.handleNewActive.bind(this)}
+                    handleGeoSearch={this.handleGeoSearch.bind(this)}
+                    handleYearSearch={this.handleYearSearch.bind(this)}
                 />
             </div>
         );
