@@ -3,13 +3,17 @@ import {
     default as React,
     Component,
 } from "react";
-
 import {
     withGoogleMap,
     GoogleMap,
     InfoWindow,
     Marker,
+    KmlLayer,
+    Polygon,
 } from "react-google-maps";
+import DrawingManager from 'react-google-maps/lib/drawing/DrawingManager'
+
+
 const activeIcon = new google.maps.MarkerImage(
     "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|FFFF00",
     null, /* size is determined at runtime */
@@ -24,14 +28,16 @@ const pinIcon = new google.maps.MarkerImage(
     null, /* anchor is bottom center of the scaled image */
     new google.maps.Size(16, 28)
 );
+const filterPolygon = function () {
 
+}
 const PopUpInfoWindowExampleGoogleMap = withGoogleMap(props => (
 
     <GoogleMap
         defaultZoom={9}
         center={props.center}
+        mapTypeId={google.maps.MapTypeId.SATELLITE}
     >
-
         {props.markers.map((marker, index) => (
             <Marker
                 key={index}
@@ -39,11 +45,6 @@ const PopUpInfoWindowExampleGoogleMap = withGoogleMap(props => (
                 onClick={() => props.onMarkerClick(marker)}
                 icon={pinIcon}
             >
-                {/*
-                 Show info window only if the 'showInfo' key of the marker is true.
-                 That is, when the Marker pin has been clicked and 'onCloseClick' has been
-                 Successfully fired.
-                 */}
                 {marker.showInfo && (
                     <InfoWindow onCloseClick={() => props.onMarkerClose(marker)}>
                         <div>{marker.infoContent}</div>
@@ -58,16 +59,37 @@ const PopUpInfoWindowExampleGoogleMap = withGoogleMap(props => (
             icon={activeIcon}
             zIndex={99999999}
         />
+        <KmlLayer
+            url="https://www.aguanacaste.ac.cr/maps/acg-kml/area-marina.kml"
+            options={{preserveViewport: true}}
+        />
+        <DrawingManager
+            defaultDrawingMode={google.maps.drawing.OverlayType.RECTANGLE}
+            defaultOptions={{
+                drawingControl: true,
+                editable:true,
+                drawingControlOptions: {
+                    position: google.maps.ControlPosition.TOP_CENTER,
+                    drawingModes: [
+                    //    google.maps.drawing.OverlayType.CIRCLE,
+                    //    google.maps.drawing.OverlayType.POLYGON,
+                        google.maps.drawing.OverlayType.RECTANGLE,
+                    ],
+                },
+                circleOptions: {
+                    fillColor: `#ffff00`,
+                    fillOpacity: 0.3,
+                    strokeWeight: 1,
+                    clickable: false,
+                    editable: true,
+                    zIndex: 1,
+                },
+            }}
+            onOverlayComplete={props.overlayComplete}
+        />
     </GoogleMap>
 ));
 
-/*
- *
- *  Add <script src="https://maps.googleapis.com/maps/api/js"></script>
- *  to your HTML to provide google.maps reference
- *
- *  @author: @chiwoojo
- */
 export default class PhotoMap extends Component {
 
     state = {
@@ -75,12 +97,9 @@ export default class PhotoMap extends Component {
             lat: 10.89035,
             lng: -85.497969,
         },
-
         activePhoto:this.props.activePhoto,
-
+        showPolygon:false,
         // array of objects of markers
-
-
         markers :this.props.photos.map((marker, index) =>{
             return {
                 key: index,
@@ -97,27 +116,84 @@ export default class PhotoMap extends Component {
             };
 
         }),
+        year : this.props.year,
+        geoSearch: this.props.geoSearch,
 
     };
 
-
-
     handleMarkerClick = this.handleMarkerClick.bind(this);
     handleMarkerClose = this.handleMarkerClose.bind(this);
+    handleOverlayComplete = this.handleOverlayComplete.bind(this);
+    handleGeoSearch=this.handleGeoSearch.bind(this);
+    handleYearSearch=this.handleYearSearch.bind(this);
+
+    handleGeoSearch(bounds){
+        this.props.handleGeoSearch(bounds);
+    }
+
+    handleYearSearch(year){
+        this.props.handleYearSearch(year);
+    }
+
+
+    handleOverlayComplete(e) {
+        console.log(e.overlay);
+        var overlay = e.overlay;
+
+        this.setState({event, e})
+        //this.state.event = e;
+        //console.log(e.overlay.getPath().getArray());
+        //console.log(e.overlay.map);
+        if (e.type !== google.maps.drawing.OverlayType.MARKER) {
+            // Switch back to non-drawing mode after drawing a shape.
+            // drawingManager.setDrawingMode(null); @todo: ver esto
+
+            // Add an event listener that selects the newly-drawn shape when the user
+            // mouses down on it.
+            /* var newShape = e.overlay;
+             newShape.type = e.type;
+             google.maps.event.addListener(newShape, 'click', function() {
+             setSelection(newShape);
+             });
+
+             setSelection(newShape);*/
+            e.type;
+            if ((e.type === google.maps.drawing.OverlayType.POLYLINE) ||
+                (e.type === google.maps.drawing.OverlayType.POLYGON)
+            ) {
+                var locations = e.overlay.getPath().getArray()
+                console.log("POLY:" + locations.toString());
+                //alert(locations.toString() + " 1st instace");
+            } else if (e.type === google.maps.drawing.OverlayType.CIRCLE) {
+                console.log("CIRCLE center=" + e.overlay.getCenter().toUrlValue(6) + " radius=" + e.overlay.getRadius());
+
+            } else if (e.type === google.maps.drawing.OverlayType.RECTANGLE) {
+                //get lat/lng bounds of the current shape
+                var nelng = overlay.getBounds().b.b;
+                var nelat = overlay.getBounds().f.b;
+                var swlng = overlay.getBounds().b.b;
+                var swlat = overlay.getBounds().f.b;
+
+                var bounds = {
+                    nelng: nelng,
+                    nelat: nelat,
+                    swlng: swlng,
+                    swlat: swlat
+                };
+                console.log(bounds);
+                this.setState({geoSearch: bounds});
+                //var center = bounds.getCenter();
+                console.log(bounds);
+                this.props.handleGeoSearch(bounds);
+                // alert(bounds.toString() + " 2nd instance");
+            }
+        }
+    }
 
     componentWillReceiveProps= function(nextProps) {
         var markers = nextProps.photos.map(function(marker, index) {
             return {
                 key: index,
-                /* icon: {
-
-                 path: "M25 0c-8.284 0-15 6.656-15 14.866 0 8.211 15 35.135 15 35.135s15-26.924 15-35.135c0-8.21-6.716-14.866-15-14.866zm-.049 19.312c-2.557 0-4.629-2.055-4.629-4.588 0-2.535 2.072-4.589 4.629-4.589 2.559 0 4.631 2.054 4.631 4.589 0 2.533-2.072 4.588-4.631 4.588z",
-                 fillColor: '#FF0000',
-                 fillOpacity: .6,
-                 strokeWeight: 0,
-                 scale: 0.5
-
-                 },*/
                 title: marker.titulo,
                 lat:marker.latitud,
                 lng:marker.longitud,
@@ -125,16 +201,19 @@ export default class PhotoMap extends Component {
                 showInfo: false,
                 infoContent: (
                     <div >{marker.titulo}</div>
-                )
+                ),
+                photo:marker, //toda la foto, por si se tienen que pasar como activa
             }
         });//.bind(this)
-        this.setState({ markers: markers });
+        this.setState({ markers: markers,activePhoto:nextProps.activePhoto });
 
     }
 
     // Toggle to 'true' to show InfoWindow and re-renders component
     handleMarkerClick(targetMarker) {
+        this.props.onNewActive(targetMarker.photo); //El nuevo activo se pasa al estado generl por props, este viene binded en eel APP
         this.setState({
+            activePhoto:targetMarker.photo,
             markers: this.state.markers.map(marker => {
                 if (marker === targetMarker) {
                     return {
@@ -162,8 +241,9 @@ export default class PhotoMap extends Component {
     }
 
     render() {
-        console.log(this.state.markers);
+      //  console.log(this.state.markers);
         return (
+            <div>
             <PopUpInfoWindowExampleGoogleMap
                 containerElement={
                     <div style={{ height: `300px` }} />
@@ -173,10 +253,19 @@ export default class PhotoMap extends Component {
                 }
                 center={this.state.center}
                 markers={this.state.markers}
-                onMarkerClick={this.handleMarkerClick}
+                onMarkerClick={this.handleMarkerClick.bind(this)}
                 onMarkerClose={this.handleMarkerClose}
                 activePhoto={this.props.activePhoto}
+                showPolygon={this.state.showPolygon}
+                overlayComplete={this.handleOverlayComplete}
             />
+                <div className="">
+                    <button value=""
+                            className="btn btn-primary"
+
+                            onClick={filterPolygon}> Filtrar por localización</button>
+                </div>
+            </div>
         );
     }
 }
