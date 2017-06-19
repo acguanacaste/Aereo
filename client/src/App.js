@@ -4,28 +4,13 @@ import './App.css';
 import Config from './config';
 import PhotoMap from './Map.js';
 import ThumbnailSet from './ThumbnailSet.js';
+import YearSlider from './YearSlider';
+
 //import axios from 'axios';
 
-//import './dist/css/'
 
-class YearSlider extends Component {
+import 'rc-slider/assets/index.css';
 
-    render() {
-        return (
-
-            <div className="row">
-                <h4>Seleccione el año y región</h4>
-                <div className="col-lg-9">
-                    <div className="panel slider"></div>
-                </div>
-                <div className="col-lg-3">
-                    <button type="button" className="btn btn-primary">Buscar</button>
-                </div>
-                <p>&nbsp;</p>
-            </div>
-        );
-    }
-}
 
 
 class MainPhoto extends Component {
@@ -48,10 +33,8 @@ class MainPhoto extends Component {
     }
 
     render() {
-
         return (
             <div className="row">
-
                 <div className="col-lg-8">
                     <div className="mainPhoto" id="mainPhoto">
                         <img key="MainPhotoImg" src={Config.apiBaseUrl+"/images/1200/"+this.props.activePhoto.foto}
@@ -76,6 +59,8 @@ class MainPhoto extends Component {
                     />
                     <YearSlider
                         handleYearSearch={this.handleYearSearch.bind(this)}
+                        dataSets={this.props.dataSets}
+                        years={this.years}
                     />
                 </div>
             </div>
@@ -101,6 +86,7 @@ class App extends Component {
             activePhoto: as[0],
             year:null,
             geoSearch:null,
+            dataSets:null,
         }
         this.handleNewPhotos= this.handleNewPhotos.bind(this);
         this.handleNewActive=this.handleNewActive.bind(this);
@@ -109,14 +95,23 @@ class App extends Component {
         this.componentDidMount=this.componentDidMount.bind(this);
     }
 
-    handleGeoSearch(bounds){
+    componentWillMount(){
+        const dataSets = [1956,1961,1968,1996,1997,2003];
+        this.setState({dataSets});
+        const length = dataSets.length - 1;
+        this.setState({year:[dataSets[0],dataSets[length]]})
+    }
 
+    handleGeoSearch(bounds){
         this.setState({geoSearch:bounds});
         console.log(this.state);
     }
 
     handleYearSearch(year){
-        this.setState({year});
+        console.log(this.state);
+        console.log(year);
+        this.setState({year:year});
+        console.log(this.state);
     }
 
     handleNewActive(activePhoto){
@@ -153,6 +148,7 @@ class App extends Component {
                     handleNewActive={this.handleNewActive.bind(this)}
                     handleGeoSearch={this.handleGeoSearch.bind(this)}
                     handleYearSearch={this.handleYearSearch.bind(this)}
+                    dataSets={this.state.dataSets}
                 />
             </div>
         );

@@ -9,7 +9,6 @@ import {
     InfoWindow,
     Marker,
     KmlLayer,
-    Polygon,
 } from "react-google-maps";
 import DrawingManager from 'react-google-maps/lib/drawing/DrawingManager'
 
@@ -157,7 +156,6 @@ export default class PhotoMap extends Component {
              });
 
              setSelection(newShape);*/
-            e.type;
             if ((e.type === google.maps.drawing.OverlayType.POLYLINE) ||
                 (e.type === google.maps.drawing.OverlayType.POLYGON)
             ) {
