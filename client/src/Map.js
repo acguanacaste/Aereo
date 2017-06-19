@@ -167,17 +167,37 @@ export default class PhotoMap extends Component {
 
             } else if (e.type === google.maps.drawing.OverlayType.RECTANGLE) {
                 //get lat/lng bounds of the current shape
-                var nelng = overlay.getBounds().b.b;
-                var nelat = overlay.getBounds().f.b;
-                var swlng = overlay.getBounds().b.b;
+                var swlng = overlay.getBounds().b.f;
                 var swlat = overlay.getBounds().f.b;
+                var nelng = overlay.getBounds().b.b;
+                var nelat = overlay.getBounds().f.f;
 
                 var bounds = {
+                    swlng: swlng,
+                    swlat: swlat,
                     nelng: nelng,
                     nelat: nelat,
-                    swlng: swlng,
-                    swlat: swlat
+                    polygon:{
+                        ne:{
+                            lat:nelat,
+                            lng:nelng
+                        },
+                        nw:{
+                            lat:nelat,
+                            lng:swlng
+                        },
+                        se:{
+                            lat:swlat ,
+                            lng:nelng
+                        },
+                        sw:{
+                            lat:swlat,
+                            lng:swlng
+                        }
+                    }
                 };
+
+
                 console.log(bounds);
                 this.setState({geoSearch: bounds});
                 //var center = bounds.getCenter();
