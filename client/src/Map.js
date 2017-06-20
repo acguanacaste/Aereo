@@ -196,9 +196,8 @@ export default class PhotoMap extends Component {
                         }
                     }
                 };
+                console.log("SET @zone = GeomFromText('Polygon(("+bounds.polygon.ne.lat+" "+bounds.polygon.ne.lng+","+bounds.polygon.nw.lat+" "+bounds.polygon.nw.lng+","+bounds.polygon.se.lat+" "+bounds.polygon.se.lng+","+bounds.polygon.sw.lat+" "+bounds.polygon.sw.lng+","+bounds.polygon.ne.lat+" "+bounds.polygon.ne.lng+"))');")
 
-
-                console.log(bounds);
                 this.setState({geoSearch: bounds});
                 //var center = bounds.getCenter();
                 console.log(bounds);
