@@ -63,4 +63,14 @@ $app->get('/fotos/', function (Request $request, Response $response) {
 
     return $response;
 });
+$app->get('/years/', function (Request $request, Response $response) {
+    $foto = new Fotos($this->db);
+    $result = $foto->getYears();
+    //var_dump($result);
+    $newResponse = $response->withJson($result);
+    return $newResponse;
+    //$response->getBody()->write("Bienvenido al API");
+
+    return $response;
+});
 $app->run();
