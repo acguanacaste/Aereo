@@ -94,4 +94,15 @@ class Fotos {
         return $response;
 
     }
+
+    public function getYears(){
+        $sql = "Select distinct(ano) from foto";
+        $stmt = $this->db->query($sql);
+        $results = [];
+        while($row = $stmt->fetch()) {
+            $results[] = $row;
+        }
+        return $results;
+
+    }
 }
