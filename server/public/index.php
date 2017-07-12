@@ -36,11 +36,24 @@ $container['db'] = function ($c) {
 $app->get('/', function (Request $request, Response $response) {
     $name = $request->getAttribute('name');
     $response->getBody()->write("Bienvenido al API");
-
     return $response;
 });
+$app->map(['GET', 'POST'], '/search/[{year}[/{geo}]]', function ($request, $response, $args) {
+    $data ="";
+    if ($request->isPost()){
+        $json = $request->getParsedBody();
+        $data =json_decode($json['json'], true);
+    }elseif ($request->isGet()){
+
+    }
+    $foto = new Fotos($this->db);
+    $result = $foto->searchPhotos($data);
+    $newResponse = $response->withJson(array($result));
+    return $newResponse;
+
+
+});
 $app->get('/fotos/', function (Request $request, Response $response) {
-    $name = $request->getAttribute('name');
     $foto = new Fotos($this->db);
     $result = $foto->getComponents();
     //var_dump($result);
