@@ -3,14 +3,27 @@ import React, {Component} from 'react';
 import './App.css';
 import Config from './config';
 import PhotoMap from './Map.js';
-import ThumbnailSet from './ThumbnailSet.js';
+import ThumbnailSet,{EmptyThumbnailSet} from './ThumbnailSet.js';
 import YearSlider from './YearSlider';
+//import ReactIntense from 'react-intense' @todo ver esto, puede haber un problema con webpack, hay webpack?
 
 //import axios from 'axios';
 
 
 import 'rc-slider/assets/index.css';
 
+class PhotoDescription extends Component{
+    render(){
+        return (
+            <div className="mainPhotoDescription bg-primary">
+                <h1 key="MainTitle" id="mainPhotoTitle">{this.props.activePhoto.titulo}</h1>
+                <ul className="photDescription">
+                    <li key="MainDesc">{this.props.activePhoto.sector}</li>
+                    <li key="MainYear">{this.props.activePhoto.ano}</li>
+                </ul>
+            </div>);
+    }
+}
 
 
 class MainPhoto extends Component {
@@ -37,18 +50,30 @@ class MainPhoto extends Component {
             <div className="row">
                 <div className="col-lg-8">
                     <div className="mainPhoto" id="mainPhoto">
-                        <img key="MainPhotoImg" src={Config.apiBaseUrl+"/images/1200/"+this.props.activePhoto.foto}
-                             className="img-responsive mainPhoto" alt={this.props.activePhoto.titulo}></img>
+                        {/*<ReactIntense
+                            key="MainPhotoImg"
+                            src={Config.apiBaseUrl+"/images/1200/"+this.props.activePhoto.foto}
+                            alt={this.props.activePhoto.titulo}
+                        />*/}
+                        {this.props.photos != null ?(
+                            <img key="MainPhotoImg" src={Config.apiBaseUrl + "/images/1200/" + this.props.activePhoto.foto}
+                                 className="img-responsive mainPhoto" alt={this.props.activePhoto.titulo}></img>
+                        ):
+                            (<img key={"MainPhotoImg"} src={Config.apiBaseUrl+"/images/ACG-logo.jpg"} alt="ACG" className="img-responsive mainPhoto" /> )}
                     </div>
+
                 </div>
                 <div className="col-lg-4">
-                    <div className="mainPhotoDescription">
-                        <h1 key="MainTitle" id="mainPhotoTitle">{this.props.activePhoto.titulo}</h1>
-                        <ul className="photDescription">
-                            <li key="MainDesc">{this.props.activePhoto.sector}</li>
-                            <li key="MainYear">{this.props.activePhoto.ano}</li>
-                        </ul>
-                    </div>
+                    {this.props.activePhoto == null ?(
+                        <div className="mainPhotoDescription bg-danger">
+                            <span>{"No hay resultados que concuerden con su búsqueda"}</span>
+                            <button className="btn btn-default">Limpiar Filros</button>
+                        </div>
+                        )
+                        :(<PhotoDescription activePhoto={this.props.activePhoto}/>)
+                    }
+
+
                     <PhotoMap
                         photos={this.props.photos}
                         activePhoto={this.props.activePhoto}
@@ -56,12 +81,14 @@ class MainPhoto extends Component {
                         geoSearch={this.props.geoSearch}
                         onNewActive={this.handleClick.bind(this)} //se pasa este métdodo para que sea usado por el mapa para poner el estado
                         handleGeoSearch={this.handleGeoSearch.bind(this)}
-                    />
-                    <YearSlider
+                        />
+                        <YearSlider
                         handleYearSearch={this.handleYearSearch.bind(this)}
                         dataSets={this.props.dataSets}
                         years={this.years}
-                    />
+                        />
+
+
                 </div>
             </div>
         );
@@ -86,17 +113,19 @@ class App extends Component {
             activePhoto: as[0],
             year:null,
             geoSearch:null,
-            dataSets:null,
-        }
+            dataSets:null
+        };
         this.handleNewPhotos= this.handleNewPhotos.bind(this);
         this.handleNewActive=this.handleNewActive.bind(this);
         this.handleGeoSearch=this.handleGeoSearch.bind(this);
         this.handleYearSearch=this.handleYearSearch.bind(this);
+        this.handleSearch=this.handleSearch.bind(this);
         this.componentDidMount=this.componentDidMount.bind(this);
+        this.getAllPhotos=this.getAllPhotos.bind(this);
     }
 
     componentWillMount(){
-        const dataSets = [1956,1961,1968,1996,1997,2003];
+        const dataSets = [1956,1961,1968,1996,1998,2003];
         this.setState({dataSets});
         const length = dataSets.length - 1;
         this.setState({year:[dataSets[0],dataSets[length]]})
@@ -104,14 +133,12 @@ class App extends Component {
 
     handleGeoSearch(bounds){
         this.setState({geoSearch:bounds});
-        console.log(this.state);
+        this.handleSearch();
     }
 
     handleYearSearch(year){
-        console.log(this.state);
-        console.log(year);
         this.setState({year:year});
-        console.log(this.state);
+        this.handleSearch();
     }
 
     handleNewActive(activePhoto){
@@ -122,8 +149,7 @@ class App extends Component {
         this.setState({photos});
     }
 
-    componentDidMount() {
-        console.log(this.state);
+    getAllPhotos(){
         fetch(Config.apiBaseUrl+"/fotos/")
             .then(photos => photos.json())
             .then(photos => {
@@ -131,28 +157,72 @@ class App extends Component {
             });
     }
 
-    render() {
-        return (
-            <div className="App container">
-                <ThumbnailSet
-                    photos={this.state.photos}
-                    handleNewPhotos={this.handleNewPhotos.bind(this)}
-                    activePhoto={this.state.activePhoto}
-                    handleNewActive={this.handleNewActive.bind(this)}
-                />
-                <MainPhoto
-                    activePhoto={this.state.activePhoto}
-                    photos={this.state.photos}
-                    year={this.state.year}
-                    geoSearch={this.state.geoSearch}
-                    handleNewActive={this.handleNewActive.bind(this)}
-                    handleGeoSearch={this.handleGeoSearch.bind(this)}
-                    handleYearSearch={this.handleYearSearch.bind(this)}
-                    dataSets={this.state.dataSets}
-                />
-            </div>
-        );
+    componentDidMount() {
+        this.getAllPhotos();
     }
+    handleSearch(){
+        const geoData = this.state.geoSearch===null?null:this.state.geoSearch.polygon;
+        const yearData = this.state.year===null?"All":this.state.year;
+        var payload = {
+            year:yearData,
+            geo:geoData
+        };
+
+        let data = new FormData();
+        data.append( "json", JSON.stringify( payload ) );
+        const qs = "?year="+ encodeURIComponent(JSON.stringify(yearData))+"&geo="+ encodeURIComponent(JSON.stringify(geoData));
+        fetch(Config.apiBaseUrl+"/search/"+qs,
+            {
+                method: "POST",
+                body: data
+            })
+            .then(function(res){ return res.json(); })
+            .then(res=>{
+                data = res[0];
+                if (data.header.error!=null){
+                    if (data.header.count >0){
+                        this.setState({
+                            photos:data.result,
+                            activePhoto:data.result[0]});
+                    }else{
+                        this.setState({
+                            photos:null,
+                            activePhoto:null});
+                    }
+
+
+                }
+                console.log(res[0]);
+            });
+    }
+
+    render() {
+
+            return (
+                <div className="App container">
+                    {this.state.photos != null?( <ThumbnailSet
+                        photos={this.state.photos}
+                        handleNewPhotos={this.handleNewPhotos.bind(this)}
+                        activePhoto={this.state.activePhoto}
+                        handleNewActive={this.handleNewActive.bind(this)}
+                    />):(<EmptyThumbnailSet />)}
+
+                    <MainPhoto
+                        activePhoto={this.state.activePhoto}
+                        photos={this.state.photos}
+                        year={this.state.year}
+                        geoSearch={this.state.geoSearch}
+                        dataSets={this.state.dataSets}
+                        handleNewActive={this.handleNewActive.bind(this)}
+                        handleGeoSearch={this.handleGeoSearch.bind(this)}
+                        handleYearSearch={this.handleYearSearch.bind(this)}
+                    />
+                </div>
+            );
+        }
+
+
+
 }
 
 
