@@ -37,7 +37,8 @@ const PopUpInfoWindowExampleGoogleMap = withGoogleMap(props => (
         center={props.center}
         mapTypeId={google.maps.MapTypeId.SATELLITE}
     >
-        {props.markers.map((marker, index) => (
+        {props.markers!=null?(
+            props.markers.map((marker, index) => (
             <Marker
                 key={index}
                 position={{ lat: parseFloat(marker.lat), lng: parseFloat(marker.lng) }}
@@ -50,14 +51,18 @@ const PopUpInfoWindowExampleGoogleMap = withGoogleMap(props => (
                     </InfoWindow>
                 )}
             </Marker>
-        ))}
 
+        ))
+        ):(<Marker/>)}
+
+        {props.activePhoto!=null?(
         <Marker
             key="ActivePicture"
             position={{ lat: parseFloat(props.activePhoto.latitud), lng: parseFloat(props.activePhoto.longitud) }}
             icon={activeIcon}
             zIndex={99999999}
-        />
+        />):(<Marker/>)
+        }
         <KmlLayer
             url="https://www.aguanacaste.ac.cr/maps/acg-kml/area-marina.kml"
             options={{preserveViewport: true}}
@@ -67,6 +72,7 @@ const PopUpInfoWindowExampleGoogleMap = withGoogleMap(props => (
             defaultOptions={{
                 drawingControl: true,
                 editable:true,
+                drawingMode:null,
                 drawingControlOptions: {
                     position: google.maps.ControlPosition.TOP_CENTER,
                     drawingModes: [
@@ -111,9 +117,7 @@ export default class PhotoMap extends Component {
                 infoContent: (
                     <div >{marker.titulo}</div>
                 )
-
             };
-
         }),
         year : this.props.year,
         geoSearch: this.props.geoSearch,
@@ -124,14 +128,10 @@ export default class PhotoMap extends Component {
     handleMarkerClose = this.handleMarkerClose.bind(this);
     handleOverlayComplete = this.handleOverlayComplete.bind(this);
     handleGeoSearch=this.handleGeoSearch.bind(this);
-    handleYearSearch=this.handleYearSearch.bind(this);
+
 
     handleGeoSearch(bounds){
         this.props.handleGeoSearch(bounds);
-    }
-
-    handleYearSearch(year){
-        this.props.handleYearSearch(year);
     }
 
 
@@ -139,10 +139,10 @@ export default class PhotoMap extends Component {
         console.log(e.overlay);
         var overlay = e.overlay;
 
-        this.setState({event, e})
+        this.setState({"event": e})
         //this.state.event = e;
         //console.log(e.overlay.getPath().getArray());
-        //console.log(e.overlay.map);
+        console.log(e);
         if (e.type !== google.maps.drawing.OverlayType.MARKER) {
             // Switch back to non-drawing mode after drawing a shape.
             // drawingManager.setDrawingMode(null); @todo: ver esto
@@ -208,21 +208,23 @@ export default class PhotoMap extends Component {
     }
 
     componentWillReceiveProps= function(nextProps) {
-        var markers = nextProps.photos.map(function(marker, index) {
-            return {
-                key: index,
-                title: marker.titulo,
-                lat:marker.latitud,
-                lng:marker.longitud,
-                position: new google.maps.LatLng(parseFloat(marker.latitud), parseFloat(marker.longitud)),
-                showInfo: false,
-                infoContent: (
-                    <div >{marker.titulo}</div>
-                ),
-                photo:marker, //toda la foto, por si se tienen que pasar como activa
-            }
-        });//.bind(this)
-        this.setState({ markers: markers,activePhoto:nextProps.activePhoto });
+        if (nextProps.photos!=null){
+            var markers = nextProps.photos.map(function(marker, index) {
+                return {
+                    key: index,
+                    title: marker.titulo,
+                    lat:marker.latitud,
+                    lng:marker.longitud,
+                    position: new google.maps.LatLng(parseFloat(marker.latitud), parseFloat(marker.longitud)),
+                    showInfo: false,
+                    infoContent: (
+                        <div >{marker.titulo}</div>
+                    ),
+                    photo:marker, //toda la foto, por si se tienen que pasar como activa
+                }
+            });//.bind(this)
+            this.setState({ markers: markers,activePhoto:nextProps.activePhoto });
+        }
 
     }
 
