@@ -1,4 +1,7 @@
-import React, {Component} from 'react';
+import {
+    default as React,
+    Component,
+} from "react";
 import Slider from 'rc-slider';
 const Range = Slider.Range;
 
@@ -18,14 +21,15 @@ class YearSlider extends Component {
         } ;
     }
     handleYearSearch= (value) => {
-        console.log(value); //eslint-disable-line
+        console.log(`YearSlide::handleYS: ${value}`); //eslint-disable-line
         const min = this.state.years[value[0]];
         const max = this.state.years[value[1]];
-        this.props.handleYearSearch([min,max]);
-    }
+        this.setState({yearsSelected:[min,max]});
+        this.props.handleYearSearch(this.state.yearsSelected);
+    };
 
     render() {
-        const wrapperStyle = { width: "100%", "padding-bottom": 25};
+        const wrapperStyle = { width: "100%", "paddingBottom": 25};
         const length = this.state.years.length - 1;
         return (
             <div>
@@ -41,7 +45,7 @@ class YearSlider extends Component {
                                 step={1}
                                 dots={true}
                                 defaultValue={[0,length]}
-                                onChange={this.handleYearSearch}
+                                onChange={this.handleYearSearch.bind(this)}
                                 marks={this.state.years2}
                                 tipFormatter={value => `${value}%`} />
                         </div>
