@@ -18,7 +18,22 @@ class Thumbnail extends Component {
         );
     }
 }
-
+export class EmptyThumbnailSet extends Component{
+    renderPlaceholder(){
+        return (<div className="thumbPlaceholder thumbnail ">
+            <img src={Config.apiBaseUrl+"/images/ACG-logo.jpg"} className="thumbnailImage" alt="Área de Conservación Guanacaste"/>
+        </div> )
+    }
+    render(){
+        let placeholders=[];
+        for (let i = 0;i<9;i++){
+            placeholders.push(this.renderPlaceholder())
+        }
+        return (<div className="emptyThumbnailSet thumbnailList">
+            {placeholders}
+        </div> )
+    }
+}
 class ThumbnailSet extends Component {
     constructor(props) {
         super(props);
@@ -44,16 +59,20 @@ class ThumbnailSet extends Component {
     render() {
         let that = this;
         let rows=[];
-        this.props.photos.map(function (pic){
-            rows.push(that.renderThumbnail(pic));
-            //console.log(photo);
-            return rows;
-        });
-        return (
-            <div className="thumbnailList">
-                {rows}
-            </div>
-        );
+        if (this.props.photos.length > 0){
+            this.props.photos.map(function (pic){
+                rows.push(that.renderThumbnail(pic));
+                //console.log(photo);
+                return rows;
+            });
+            return (
+                <div className="thumbnailList">
+                    {rows}
+                </div>
+            );
+        }
+
+
     }
 }
 

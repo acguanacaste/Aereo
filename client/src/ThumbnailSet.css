@@ -21,3 +21,20 @@
     white-space: nowrap;
     height: 150px;
 }
+.emptyThumbnailSet{
+    min-height: 150px;
+    display: flex;
+}
+.thumbPlaceholder{
+    width: 140px;
+    height: 120px;
+
+    background-color: #f5f5f5;
+    -ms-flex-flow: row;
+    flex-flow: row;
+    margin: 0 2px;
+    margin-bottom: 10px;
+}
+.thumbPlaceholder img{
+    opacity: 0.1;
+}
